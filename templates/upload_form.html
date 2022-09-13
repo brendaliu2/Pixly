@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Upload Image</h1>
+
+<div>
+  <form action="/upload" method="post">
+    <label for="image">Choose Image to Edit:</label>
+    <input type="file" id="image" name="image" accept="image/png, image/jpeg">
+    
+  </form>
+</div>
+
+
+
+
+{% endblock %}

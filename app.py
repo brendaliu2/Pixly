@@ -1,4 +1,5 @@
 # FLASK IMPORTS
+from urllib.parse import urldefrag
 from flask import Flask, render_template, redirect, flash, request
 
 # MODEL IMPORTS 
@@ -45,7 +46,48 @@ def show_images():
 
     return render_template('image_listing.html', all_images = all_images)
 
-# @app.post('/users/new')
+
+# @app.get('/search')
+# def show_search_form():
+#     """
+#     Show form with one input for image search
+
+#     """
+#     #flask wtf form
+    
+#     return render_template('search.html', search_form = search_form)
+    
+    
+
+@app.get('/upload')
+def show_upload_form():
+    """
+    Show upload form
+
+    """
+
+    return render_template('upload_form.html')
+    
+
+@app.post('/upload')
+def show_upload_form():
+    """
+    Upload image to DB, upload to AWS, redirect homepage 
+
+    """
+    #instatiate image instance
+    # new_image = Image()
+    
+    #parse image metadata
+
+    #upload image to AWS & get URL
+    #store metadata in DB with models 
+    
+    return redirect('/')
+    
+    
+    
+# @app.get('/users/new')
 # def add_user():
 #     """Process the add form, adding a new user and going back to /users"""
 
