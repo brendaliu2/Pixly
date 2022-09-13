@@ -5,6 +5,8 @@ from urllib.parse import urldefrag
 from flask import Flask, render_template, redirect, flash, request
 from boto_model import  upload_file
 from werkzeug.utils import secure_filename
+from PIL import Image, ExifTags
+from PIL.ExifTags import TAGS
 
 load_dotenv()
 # MODEL IMPORTS 
@@ -24,6 +26,9 @@ app = Flask(__name__)
 # app.config['SQLALCHEMY_ECHO'] = True
 app.config['ACCESS_KEY'] = os.environ['ACCESS_KEY']
 app.config['SECRET_ACCESS_KEY'] = os.environ['SECRET_ACCESS_KEY']
+app.config['BUCKET'] = os.environ['BUCKET']
+
+BUCKET = os.environ['BUCKET']
 
 # connect_db(app)
 
@@ -40,6 +45,28 @@ TEST_IMAGE_PATH = 'images/test.jpg'
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+           
+
+def get_exif_data(image):
+    img = Image.open(image)
+    img.load()
+    img_exif = img.getexif()
+    
+    if img_exif is None:
+        print('Sorry, image has no exif data.')
+    else:
+        
+        for key, val in img_exif.items():
+            if key in ExifTags.TAGS:
+                print(f'{ExifTags.TAGS[key]}:{val}')
+            else:
+                print('no keys')
+        print('we got here')
+        breakpoint()
+        
+
+    return
+        
 
 ##################### ROUTES ##################### 
 
@@ -94,18 +121,31 @@ def process_upload_form():
     Upload image to DB, upload to AWS, redirect homepage 
 
     """
+    
+    #uploading to AWS
     file = request.files['file']
     extra_args = {'ContentType': file.content_type, 'ACL': 'public-read'}
+    
+    
+    get_exif_data(file)
     
     if file.filename == '':
         flash('No selected file')
         return redirect('/')
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        upload_file(file, 'pix-ly', filename, extra_args)
+        upload_file(file, BUCKET, filename, extra_args)
+        
+        
+        
         return redirect('/')
     
+    
+    #getting exif tag
+    
+    
     return redirect('/')
+    
     #instatiate image instance
     # new_image = Image()
     
