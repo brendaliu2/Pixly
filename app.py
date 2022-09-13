@@ -4,10 +4,15 @@ from dotenv import load_dotenv
 from urllib.parse import urldefrag
 from flask import Flask, render_template, redirect, flash, request
 from boto_model import  upload_file
+from werkzeug.utils import secure_filename
 
 load_dotenv()
 # MODEL IMPORTS 
 # from models import db, connect_db, User, Post
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
+
 
 #from flask_debugtoolbar import DebugToolbarExtension
 
@@ -28,6 +33,14 @@ app.config['SECRET_ACCESS_KEY'] = os.environ['SECRET_ACCESS_KEY']
 # db.create_all()
 
 TEST_IMAGE_PATH = 'images/test.jpg'
+
+
+##################### UTILITY FUNCTIONS ##################### 
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 ##################### ROUTES ##################### 
 
 # HOMEPAGE (accept filter parameter)
@@ -81,6 +94,18 @@ def process_upload_form():
     Upload image to DB, upload to AWS, redirect homepage 
 
     """
+    file = request.files['file']
+    extra_args = {'ContentType': file.content_type, 'ACL': 'public-read'}
+    
+    if file.filename == '':
+        flash('No selected file')
+        return redirect('/')
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        upload_file(file, 'pix-ly', filename, extra_args)
+        return redirect('/')
+    
+    return redirect('/')
     #instatiate image instance
     # new_image = Image()
     
@@ -88,8 +113,6 @@ def process_upload_form():
 
     #upload image to AWS & get URL
     #store metadata in DB with models 
-    upload_file(TEST_IMAGE_PATH , 'bjl-pixly', 'test_lighthouse.jpg')
-    return redirect('/')
     
     
     

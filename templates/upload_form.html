@@ -5,9 +5,9 @@
 <h1>Upload Image</h1>
 
 <div>
-  <form action="/upload" method="post">
-    <label for="image">Choose Image to Edit:</label>
-    <input type="file" id="image" name="image" accept="image/png, image/jpeg">
+  <form action="/upload" method="post" enctype="multipart/form-data">
+    <label for="file">Choose Image to Edit:</label>
+    <input type="file" id="file" name="file" accept="image/png, image/jpeg">
     <button>Add</button>
   </form>
 </div>
