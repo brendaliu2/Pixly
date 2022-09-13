@@ -1,7 +1,11 @@
 # FLASK IMPORTS
+import os
+from dotenv import load_dotenv
 from urllib.parse import urldefrag
 from flask import Flask, render_template, redirect, flash, request
+from boto_model import  upload_file
 
+load_dotenv()
 # MODEL IMPORTS 
 # from models import db, connect_db, User, Post
 
@@ -13,6 +17,8 @@ app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly'
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # app.config['SQLALCHEMY_ECHO'] = True
+app.config['ACCESS_KEY'] = os.environ['ACCESS_KEY']
+app.config['SECRET_ACCESS_KEY'] = os.environ['SECRET_ACCESS_KEY']
 
 # connect_db(app)
 
@@ -21,7 +27,7 @@ app = Flask(__name__)
 
 # db.create_all()
 
-
+TEST_IMAGE_PATH = 'images/test.jpg'
 ##################### ROUTES ##################### 
 
 # HOMEPAGE (accept filter parameter)
@@ -65,12 +71,12 @@ def show_upload_form():
     Show upload form
 
     """
-
+    
     return render_template('upload_form.html')
     
 
 @app.post('/upload')
-def show_upload_form():
+def process_upload_form():
     """
     Upload image to DB, upload to AWS, redirect homepage 
 
@@ -82,7 +88,7 @@ def show_upload_form():
 
     #upload image to AWS & get URL
     #store metadata in DB with models 
-    
+    upload_file(TEST_IMAGE_PATH , 'bjl-pixly', 'test_lighthouse.jpg')
     return redirect('/')
     
     

@@ -17,6 +17,10 @@ Thing to Research:
 -store image file in AWS
 -Users can search image data from the EXIF fields (you can learn about PostgreSQL full-text search)
 -Edit photos with Pillow library
+- upload photo to AWS - https://soshace.com/uploading-files-to-amazon-s3-with-flask-form-part1-uploading-small-files/
+
+-type of data EXIF files gives back
+-diff photos from diff devices have diff EXIF files
 
 
 Database:
