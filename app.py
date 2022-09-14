@@ -147,13 +147,13 @@ def process_upload_form():
         flash('No selected file')
         return redirect('/')
     if file and allowed_file(file.filename):
+        #Generate unique filename (break out into separate function?)
         file_uuid = str(uuid.uuid4())
         file_extension = extract_file_extension(file.filename)
-        
         unique_filename = f"{file_uuid}.{file_extension}"
         
-        filename = secure_filename(unique_filename)
         
+        filename = secure_filename(unique_filename)
         upload_file(greyscale_img, BUCKET, filename, extra_args)
         #TODO: manipulate 'published' at later point
         new_image = UserImage(filename=filename,published=True)
