@@ -7,11 +7,14 @@ from boto_model import  upload_file
 from werkzeug.utils import secure_filename
 from PIL import Image, ExifTags, ImageOps
 from PIL.ExifTags import TAGS
+import io
+import uuid
 from urllib.request import urlopen
+
 
 load_dotenv()
 # MODEL IMPORTS 
-from models import db, connect_db, Image
+from models import db, connect_db, UserImage
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
@@ -43,7 +46,11 @@ db.create_all()
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-           
+
+
+def extract_file_extension(filename):          
+    return filename.rsplit('.', 1)[1].lower()
+
 # TODO: How to get EXIF data into database?
 def get_exif_data(image):
     img = Image.open(image)
@@ -58,11 +65,15 @@ def get_exif_data(image):
                 print(f'{ExifTags.TAGS[key]}:{val}')
         
     return
+
 # Make image black/white
 def grey(image):
-    img = Image.open(urlopen(image))
+    img = Image.open(image)
     gray_img = ImageOps.grayscale(img)
-    return gray_img
+    in_mem_file = io.BytesIO()
+    gray_img.save(in_mem_file, format=img.format)
+    in_mem_file.seek(0)
+    return in_mem_file
     
 
 ##################### ROUTES ##################### 
@@ -84,7 +95,7 @@ def show_images():
     Each image is a link to route for show_image based on the target's primary key.
 
     """
-    all_images = Image.query.all()
+    all_images = UserImage.query.all()
     
     
     img_urls = []
@@ -128,22 +139,30 @@ def process_upload_form():
     extra_args = {'ContentType': file.content_type, 'ACL': 'public-read'}
     
     #getting exif tag
-    # get_exif_data(file)
+    #get_exif_data(file)
+    
+    greyscale_img = grey(file)
     
     if file.filename == '':
         flash('No selected file')
         return redirect('/')
     if file and allowed_file(file.filename):
-        #TODO: Unique filename?
-        filename = secure_filename(file.filename)
-        upload_file(file, BUCKET, filename, extra_args)
+        file_uuid = str(uuid.uuid4())
+        file_extension = extract_file_extension(file.filename)
+        
+        unique_filename = f"{file_uuid}.{file_extension}"
+        
+        filename = secure_filename(unique_filename)
+        
+        upload_file(greyscale_img, BUCKET, filename, extra_args)
         #TODO: manipulate 'published' at later point
-        new_image = Image(filename=filename,published=True)
+        new_image = UserImage(filename=filename,published=True)
         db.session.add(new_image)
         db.session.commit()
-        return redirect(f'edit/{filename}')
+        # TODO: Reintroduce edit form
+        # return redirect(f'edit/{filename}')
         
-    redirect('/')
+    return redirect('/')
     
 
 

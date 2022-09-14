@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-class Image(db.Model):
+class UserImage(db.Model):
     """Image."""
 
     __tablename__ = "images"
