@@ -5,16 +5,16 @@ Frontend: Jinja...then React if time to spare
 
 
 Pages:
--HomePage (displays all images with published as t)
--Search for photo
--Form for adding new photo
+WORKING-HomePage (displays all images with published as t)
+WORKING-Form for adding new photo
 -Edit photo
+-Search for photo
 
 
 Thing to Research:
--upload images
--retrieve metadata from photo(location, camera, etc) & store in AWS/DB
--store image file in AWS
+DONE-upload images
+DONE-retrieve metadata from photo(location, camera, etc) & store in AWS/DB
+DONE-store image file in AWS
 -Users can search image data from the EXIF fields (you can learn about PostgreSQL full-text search)
 -Edit photos with Pillow library
 - upload photo to AWS - https://soshace.com/uploading-files-to-amazon-s3-with-flask-form-part1-uploading-small-files/

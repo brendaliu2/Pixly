@@ -5,8 +5,9 @@ from urllib.parse import urldefrag
 from flask import Flask, render_template, redirect, flash, request
 from boto_model import  upload_file
 from werkzeug.utils import secure_filename
-from PIL import Image, ExifTags
+from PIL import Image, ExifTags, ImageOps
 from PIL.ExifTags import TAGS
+from urllib.request import urlopen
 
 load_dotenv()
 # MODEL IMPORTS 
@@ -57,7 +58,12 @@ def get_exif_data(image):
                 print(f'{ExifTags.TAGS[key]}:{val}')
         
     return
-        
+# Make image black/white
+def grey(image):
+    img = Image.open(urlopen(image))
+    gray_img = ImageOps.grayscale(img)
+    return gray_img
+    
 
 ##################### ROUTES ##################### 
 
@@ -135,15 +141,45 @@ def process_upload_form():
         new_image = Image(filename=filename,published=True)
         db.session.add(new_image)
         db.session.commit()
+        return redirect(f'edit/{filename}')
+        
+    redirect('/')
+    
+
+
+# @app.post('/edit')
+# def process_edit():
+    '''
+    Change photo to grey, sepia, size, border depending on user selection
+    '''
+    #accept form selection
+    
+    # edit filter helper function
+    
+    
+    #upload to AWS
+    
+    #redirect ('edit_form')
+    
+@app.get('/edit/<filename>')
+def display_edit(filename):
+    '''
+    Diplay original photo, edited photo result(if applicable), and form to edit
+    '''
+    og_image = f'{BASE_URL}{filename}'
+    new_image = f'{BASE_URL}{filename}'
+    
+    if request.args:
+        filter = request.args['filter']
+        new_image = grey(og_image)
+        
         
     
-    
-    return redirect('/')
-    
-    #instatiate image instance
-    # new_image = Image()
-    #store metadata in DB with models 
-    
+    return render_template(
+        'edit_page.html', 
+        og_image=og_image, 
+        new_image=new_image,
+        filename=filename)
     
     
 # @app.get('/users/new')

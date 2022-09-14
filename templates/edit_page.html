@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Edit Your Image</h1>
+
+<div class="og-image">
+  <h2>Original Photo:</h2>
+  <img src='{{og_image}}' width="100px"/>
+</div>
+
+<div class="new-image">
+  <h2>Edited Photo:</h2>
+  <img src='{{new_image}}' width="100px"/>
+</div>
+
+<div class="edit-photo">
+  <form action="/edit/{{filename}}" method="get">
+    <p>Choose Filter:</p>
+    <label for="grey">Grey</label>
+    <input type='radio' name="filter" id="grey" value="grey">
+    <label for="sepia">Sepia</label>
+    <input type='radio' name="filter" id="sepia" value="sepia">
+    <button>Edit</button>
+  </form>
+</div>
+
+<div class="publish-photo">
+  <form action="/edit" method="post">
+    <button>Publish</button>
+  </form>
+</div>
+
+
+
+{% endblock %}
