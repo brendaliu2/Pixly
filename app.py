@@ -77,23 +77,27 @@ def grey(image):
     
 
 # Make image sepia
+# FIXME: DOES NOT WORK RIGHT WITH PNGS RIGHT NOW (oh well?)
 def sepia(image):
     img = Image.open(image)
     palette = ImagePalette.sepia()
-    # img.palette = palette
-    # sepia_img = img.convert("P", palette=palette.palette)
-    # breakpoint()
-    # sepia_img = img.convert("RGB")
-    
-    sepia_img = img.convert("P")
-    sepia_img.putpalette(palette)
-    # sepia_img = img.convert("RGB")
-    
-
+    sepia_img = img.convert('P')
+    sepia_img.putpalette(palette.palette)
 
     in_mem_file = io.BytesIO()
-    
-    sepia_img.save(in_mem_file, format=img.format)
+    sepia_img.save(in_mem_file, format='PNG')
+    in_mem_file.seek(0)
+    return in_mem_file
+
+# Make image random color palette
+def random_palette(image):
+    img = Image.open(image)
+    palette = ImagePalette.random()
+    sepia_img = img.convert('P')
+    sepia_img.putpalette(palette.palette)
+
+    in_mem_file = io.BytesIO()
+    sepia_img.save(in_mem_file, format='PNG')
     in_mem_file.seek(0)
     return in_mem_file
 
@@ -109,14 +113,14 @@ def border(image):
     
 
 # Change Image Size
-# def resize(image):
-#     img = Image.open(image)
-#     resize_img = img.resize((20,20))
+def resize(image):
+    img = Image.open(image)
+    resize_img = img.resize((20,20))
     
-#     in_mem_file = io.BytesIO()
-#     resize_img.save(in_mem_file, format=img.format)
-#     in_mem_file.seek(0)
-#     return in_mem_file
+    in_mem_file = io.BytesIO()
+    resize_img.save(in_mem_file, format=img.format)
+    in_mem_file.seek(0)
+    return in_mem_file
 
 ##################### ROUTES ##################### 
 
