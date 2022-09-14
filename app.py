@@ -5,7 +5,7 @@ from urllib.parse import urldefrag
 from flask import Flask, render_template, redirect, flash, request
 from boto_model import  upload_file
 from werkzeug.utils import secure_filename
-from PIL import Image, ExifTags, ImageOps
+from PIL import Image, ExifTags, ImageOps, ImagePalette
 from PIL.ExifTags import TAGS
 import io
 import uuid
@@ -76,6 +76,48 @@ def grey(image):
     return in_mem_file
     
 
+# Make image sepia
+def sepia(image):
+    img = Image.open(image)
+    palette = ImagePalette.sepia()
+    # img.palette = palette
+    # sepia_img = img.convert("P", palette=palette.palette)
+    # breakpoint()
+    # sepia_img = img.convert("RGB")
+    
+    sepia_img = img.convert("P")
+    sepia_img.putpalette(palette)
+    # sepia_img = img.convert("RGB")
+    
+
+
+    in_mem_file = io.BytesIO()
+    
+    sepia_img.save(in_mem_file, format=img.format)
+    in_mem_file.seek(0)
+    return in_mem_file
+
+# Add Image Border
+def border(image):
+    img = Image.open(image)
+    border_img = ImageOps.expand(img, 5)
+    
+    in_mem_file = io.BytesIO()
+    border_img.save(in_mem_file, format=img.format)
+    in_mem_file.seek(0)
+    return in_mem_file
+    
+
+# Change Image Size
+# def resize(image):
+#     img = Image.open(image)
+#     resize_img = img.resize((20,20))
+    
+#     in_mem_file = io.BytesIO()
+#     resize_img.save(in_mem_file, format=img.format)
+#     in_mem_file.seek(0)
+#     return in_mem_file
+
 ##################### ROUTES ##################### 
 
 # HOMEPAGE (accept filter parameter)
@@ -141,7 +183,7 @@ def process_upload_form():
     #getting exif tag
     #get_exif_data(file)
     
-    greyscale_img = grey(file)
+    sepia_img = sepia(file)
     
     if file.filename == '':
         flash('No selected file')
@@ -154,7 +196,7 @@ def process_upload_form():
         
         
         filename = secure_filename(unique_filename)
-        upload_file(greyscale_img, BUCKET, filename, extra_args)
+        upload_file(sepia_img, BUCKET, filename, extra_args)
         #TODO: manipulate 'published' at later point
         new_image = UserImage(filename=filename,published=True)
         db.session.add(new_image)
