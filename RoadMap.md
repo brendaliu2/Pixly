@@ -34,6 +34,18 @@ Database:
     when user clicks done:
         published -> t
 
+    columns:
+        * filename (req)
+        * published (req)
+        * blackandwhite (opt)
+        * sepia (opt)
+        * downsized (opt)
+        * border (opt)
+        * metadata (holds JSON?)
+        * tags 
+
+
+
 
 User Perspective:
 1. Arrive at homepage with edited photos

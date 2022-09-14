@@ -2,18 +2,17 @@
 
 {% block content %}
 
-<h1>USERS</h1>
+<h1>IMAGES</h1>
 
 <div>
     <ul>
         {% for image in all_images %}
-        <li><img src="#" /></li>
+        <li><img src='{{image}}' width="100px"/></li>
         {% endfor %}
     </ul>
 </div>
 
 <div>
-    PLACEHOLDER FOR HOMEPAGE
     <a href="/search" class="btn btn-primary">Search</a>
     <a href="/upload" class="btn btn-primary">Upload</a>
 </div>

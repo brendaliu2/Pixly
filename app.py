@@ -10,34 +10,31 @@ from PIL.ExifTags import TAGS
 
 load_dotenv()
 # MODEL IMPORTS 
-# from models import db, connect_db, User, Post
+from models import db, connect_db, Image
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-
-
 
 #from flask_debugtoolbar import DebugToolbarExtension
 
 app = Flask(__name__)
 
-# TODO: DB imports and setup
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# app.config['SQLALCHEMY_ECHO'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///pixly'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ECHO'] = True
+
 app.config['ACCESS_KEY'] = os.environ['ACCESS_KEY']
 app.config['SECRET_ACCESS_KEY'] = os.environ['SECRET_ACCESS_KEY']
 app.config['BUCKET'] = os.environ['BUCKET']
 
 BUCKET = os.environ['BUCKET']
+BASE_URL = os.environ['BASE_URL']
 
-# connect_db(app)
+connect_db(app)
 
 # app.config['SECRET_KEY'] = "SECRET!"
-# #debug = DebugToolbarExtension(app)
+#debug = DebugToolbarExtension(app)
 
-# db.create_all()
-
-TEST_IMAGE_PATH = 'images/test.jpg'
+db.create_all()
 
 
 ##################### UTILITY FUNCTIONS ##################### 
@@ -46,25 +43,19 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
            
-
+# TODO: How to get EXIF data into database?
 def get_exif_data(image):
     img = Image.open(image)
     img.load()
     img_exif = img.getexif()
     
     if img_exif is None:
-        print('Sorry, image has no exif data.')
+        return None
     else:
-        
         for key, val in img_exif.items():
             if key in ExifTags.TAGS:
                 print(f'{ExifTags.TAGS[key]}:{val}')
-            else:
-                print('no keys')
-        print('we got here')
-        breakpoint()
         
-
     return
         
 
@@ -87,10 +78,15 @@ def show_images():
     Each image is a link to route for show_image based on the target's primary key.
 
     """
-    # all_images = Image.query.all()
-    all_images = ['a','b','c']
-
-    return render_template('image_listing.html', all_images = all_images)
+    all_images = Image.query.all()
+    
+    
+    img_urls = []
+    
+    for image in all_images:
+        img_urls.append(f'{BASE_URL}{image.filename}')
+        
+    return render_template('image_listing.html', all_images = img_urls)
 
 
 # @app.get('/search')
@@ -119,39 +115,33 @@ def show_upload_form():
 def process_upload_form():
     """
     Upload image to DB, upload to AWS, redirect homepage 
-
     """
     
     #uploading to AWS
     file = request.files['file']
     extra_args = {'ContentType': file.content_type, 'ACL': 'public-read'}
     
-    
-    get_exif_data(file)
+    #getting exif tag
+    # get_exif_data(file)
     
     if file.filename == '':
         flash('No selected file')
         return redirect('/')
     if file and allowed_file(file.filename):
+        #TODO: Unique filename?
         filename = secure_filename(file.filename)
         upload_file(file, BUCKET, filename, extra_args)
+        #TODO: manipulate 'published' at later point
+        new_image = Image(filename=filename,published=True)
+        db.session.add(new_image)
+        db.session.commit()
         
-        
-        
-        return redirect('/')
-    
-    
-    #getting exif tag
     
     
     return redirect('/')
     
     #instatiate image instance
     # new_image = Image()
-    
-    #parse image metadata
-
-    #upload image to AWS & get URL
     #store metadata in DB with models 
     
     

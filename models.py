@@ -2,6 +2,58 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+class Image(db.Model):
+    """Image."""
+
+    __tablename__ = "images"
+
+    filename = db.Column(
+        db.String,
+        primary_key=True
+    )
+
+    published = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=False
+    )
+
+    blackandwhite = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=False
+    )
+    
+    sepia = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=False
+    )
+    
+    downsized = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=False
+    )
+    
+    border = db.Column(
+        db.Boolean,
+        nullable=False,
+        default=False
+    )
+    
+    exifdata = db.Column(
+        db.String,
+        nullable=True
+    )
+
+    # tags = db.Column(
+    #     db.Boolean,
+    #     nullable=False,
+    #     default=False
+    # )
+
+
 
 def connect_db(app):
     """Connect to database."""
@@ -9,5 +61,3 @@ def connect_db(app):
     db.app = app
     db.init_app(app)
 
-
-DEFAULT_IMAGE_URL = "https://static.independent.co.uk/2021/12/03/15/Pisco%20Cat%20puss%20in%20boots-1.jpg?width=1200"
