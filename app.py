@@ -8,6 +8,10 @@ from PIL import Image, ExifTags
 from PIL.ExifTags import TAGS
 import uuid
 from filters import *
+from PIL import Image, ImageOps, ImagePalette
+import urllib.request
+import io
+import base64
 
 
 load_dotenv()
@@ -180,8 +184,7 @@ def process_upload_form():
         new_image = UserImage(filename=filename,published=True, filter=filter)
         db.session.add(new_image)
         db.session.commit()
-        # TODO: Reintroduce edit form
-        # return redirect(f'edit/{filename}')
+        return redirect(f'edit/{filename}')
         
     return redirect('/')
     
@@ -207,15 +210,20 @@ def display_edit(filename):
     Diplay original photo, edited photo result(if applicable), and form to edit
     '''
     og_image = f'{BASE_URL}{filename}'
-    new_image = f'{BASE_URL}{filename}'
-    
-    if request.args:
+    urllib.request.urlretrieve(f'{BASE_URL}{filename}', "encoded.png")
+        
+    try:
         filter = request.args['filter']
-        new_image = gray(og_image)
+    except:
+        filter = 'none'
+    
+    data = set_filter("encoded.png", filter)
+    encoded_img_data = base64.b64encode(data.getvalue())
 
     return render_template(
         'edit_page.html', 
         og_image=og_image, 
-        new_image=new_image,
-        filename=filename)
+        # new_image=new_image,
+        filename=filename,
+        encoded_image=encoded_img_data.decode('utf-8'))
     

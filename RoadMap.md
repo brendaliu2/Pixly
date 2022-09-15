@@ -36,7 +36,6 @@ User Perspective:
 3. Editing page with buttons that link pillow commands
 4. Click publish
 
-
 THURSDAY MORNING:
 - edit page
 - implement tags?
@@ -47,6 +46,7 @@ THURSDAY AFTERNOON:
 FRIDAY:
 - file clean up, docstrings
 - styling/features
+- vscode pretty upgrade??
     
     
 Additional Features: 
