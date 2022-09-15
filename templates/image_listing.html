@@ -2,21 +2,37 @@
 
 {% block content %}
 
-<h1>IMAGES</h1>
+<h1 class="display-1 text-center">PIX.LY</h1>
 
-<div>
-    <ul>
-        {% for image in all_images %}
-        <li><img src='{{image}}' style='max-width:100px'/></li>
-        {% endfor %}
-    </ul>
+<div class="container">
+    <div class="row">
+        <div class="col text-end mb-3">
+            <a href="/search" class="btn btn-primary">Search</a>
+        </div>
+        <div class="col text-start mb-3">
+            <a href="/upload" class="btn btn-primary">Upload</a>
+        </div>
+    </div>
 </div>
 
-<div>
-    <a href="/search" class="btn btn-primary">Search</a>
-    <a href="/upload" class="btn btn-primary">Upload</a>
+<div class="container px-4">
+    <div class="row gx-1">
+        <div class="col-md-6 col-sm-12">
+            {% for image in all_images %}
+            {% if loop.index is odd() %}
+            <img class='img-fluid p-3' src='{{image}}' />
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="col-md-6 col-sm-12">
+            {% for image in all_images %}
+            {% if loop.index is even() %}
+            <img class='img-fluid p-3' src='{{image}}' />
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
 </div>
-
-
 
 {% endblock %}
