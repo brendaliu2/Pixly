@@ -8,14 +8,16 @@
   <title>{% block title %}PIX.LY{% endblock %}</title>
 
   <link rel="stylesheet" href="https://unpkg.com/bootstrap@5/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="../static/bootstrap.min.css">
   <link rel="stylesheet" href="../static/app.css">
 </head>
 
 <body>
-
-  <a href="/" class="link-dark text-decoration-none">
-    <h1 class="display-1 text-center">PIX.LY</h1>
-  </a>
+  <div class="border-bottom bg-light mb-1">
+    <a href="/" class="link-dark text-decoration-none">
+      <h1 class="display-1 text-center">PIX.LY</h1>
+    </a>
+  </div>
   {% block content %}
 
 

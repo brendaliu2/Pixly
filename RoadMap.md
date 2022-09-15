@@ -41,19 +41,21 @@ DONE edit page
 - implement tags?
 
 THURSDAY AFTERNOON:
-- styling
+DONE styling
 
 FRIDAY:
 - file clean up, docstrings
-- styling/features
-- vscode pretty upgrade??
+    - clean /upload /search routes
+- lightning talk plan
+- photo/desc as link to display metadata?
+
     
+- vscode pretty upgrade??
     
 Additional Features: 
     - come back to unfinished photo, search for certain filters
     - flask wtforms
     - more palettes
-    - photo as link to display metadata
     - keep random result palette consistent when image is published
     - make buttons swap filters when selected instead of form submit
     
