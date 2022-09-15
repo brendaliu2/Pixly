@@ -10,6 +10,7 @@ import uuid
 from filters import *
 from PIL import Image, ImageOps, ImagePalette
 from urllib.request import urlopen
+from sqlalchemy import update
 
 import io
 import base64
@@ -84,9 +85,10 @@ def set_filter(file, filter):
     elif filter == 'random':
             img = random(file)
     else: 
-            return random(file)
-            
+            return file
+        
     return img
+
 
 ##################### ROUTES ##################### 
 
@@ -112,11 +114,14 @@ def show_images():
     
     if hasSearch:
         searchTerm = request.args['search'].lower()
+        #TODO: how to filter by multiple different values?
         all_images = UserImage.query.filter(
-            UserImage.filter == searchTerm).all()
-        #TODO: add no results message
+            UserImage.description.like(f"%{searchTerm}%"),
+            UserImage.published == True).all()
+
     else:
-        all_images = UserImage.query.all()
+        all_images = UserImage.query.filter(
+            UserImage.published == True).all()
 
     img_urls = []
     
@@ -153,18 +158,11 @@ def show_upload_form():
 @app.post('/upload')
 def process_upload_form():
     """
-    Upload image to DB, upload to AWS, redirect homepage 
+    Upload image to DB, upload to AWS, redirect to edit page 
     """
     
     file = request.files['file'] 
     extra_args = {'ContentType': file.content_type, 'ACL': 'public-read'}
-    
-    try:
-        filter = request.form['filter']
-        img = set_filter(file, filter)
-    except:
-        filter = 'none'
-        img = file
 
     #getting exif tag
     #get_exif_data(file)
@@ -178,11 +176,12 @@ def process_upload_form():
         filename = secure_filename(unique_filename)
         
         #add to AWS
-        upload_file(img, BUCKET, filename, extra_args)
+        upload_file(file, BUCKET, filename, extra_args)
         #TODO: manipulate 'published' at later point
         
         #add to DB
-        new_image = UserImage(filename=filename,published=True, filter=filter)
+        #TODO: Set original image to be published=False once edit form is running
+        new_image = UserImage(filename=filename,published=False,content_type=file.content_type)
         db.session.add(new_image)
         db.session.commit()
         return redirect(f'edit/{filename}')
@@ -204,31 +203,6 @@ def process_upload_form():
     #upload to AWS
     
     #redirect ('edit_form')
- 
-    
-# @app.get('/edit/<filename>')
-# def display_edit(filename):
-#     '''
-#     Diplay original photo, edited photo result(if applicable), and form to edit
-#     '''
-#     og_image = f'{BASE_URL}{filename}'
-    # urllib.request.urlretrieve(f'{BASE_URL}{filename}', "encoded2.png")
-        
-#     # try:
-#     #     filter = request.args['filter']
-#     # except:
-#     #     filter = 'none'
-#     # data = gray('encoded2.png')
-#     # # data = set_filter("encoded.png", filter)
-#     # encoded_img_data = base64.b64encode(data.getvalue())
-
-#     return render_template(
-#         'edit_page.html', 
-#         og_image=og_image, 
-#         # new_image=new_image,
-#         filename=filename,
-#         # encoded_image=encoded_img_data.decode('utf-8')
-#         )
     
 @app.get('/edit/<filename>')
 def display_edit(filename):
@@ -237,7 +211,6 @@ def display_edit(filename):
     '''
     
     og_image = f'{BASE_URL}{filename}'
-    
     
     try:
         filter = request.args['filter']
@@ -248,17 +221,49 @@ def display_edit(filename):
         filter = 'none'
         new_image = None
     
-
-    # img = Image.open(urlopen(og_image))
-    # gray_img = ImageOps.grayscale(img)
-    # in_mem_file = io.BytesIO()
-    # gray_img.save(in_mem_file, format=img.format)
-    # encoded_img_data = base64.b64encode(in_mem_file.getvalue())
-    # breakpoint()
     return render_template(
         'edit_page.html', 
         og_image=og_image, 
         filename=filename,
-        # encoded_image=encoded_img_data.decode('utf-8')
+        filter=filter,
         encoded_image=new_image
         )
+    
+@app.post('/edit/<filename>/<filter>')
+def publish_edit(filename, filter):
+    '''
+    Uploads edited photo to AWS and returns to homepage
+    '''
+    og_image = f'{BASE_URL}{filename}'
+    og_file = UserImage.query.get(filename)
+    
+    description = request.form['description']
+    
+    try:
+        data = set_filter(urlopen(og_image), filter)
+        encoded_img_data = base64.b64encode(data.getvalue())
+        new_image = encoded_img_data.decode('utf-8')
+    except:
+        image = UserImage.query.get(filename)
+        image.published = True
+        image.description = description
+        db.session.commit()
+        return redirect('/')
+ 
+ 
+    #add to AWS
+    extra_args = {'ContentType': og_file.content_type, 'ACL': 'public-read'}
+    unique_filename = generate_unique_filename(filename)
+    edited_filename = secure_filename(unique_filename)
+    
+    upload_file(data, BUCKET, edited_filename, extra_args)
+
+    edited_image = UserImage(filename=edited_filename, 
+                             published=True, 
+                             content_type=og_file.content_type, 
+                             filter=filter,
+                             description=description)
+    db.session.add(edited_image)
+    db.session.commit()
+
+    return redirect('/')

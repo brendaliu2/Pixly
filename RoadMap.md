@@ -37,7 +37,7 @@ User Perspective:
 4. Click publish
 
 THURSDAY MORNING:
-- edit page
+DONE edit page
 - implement tags?
 
 THURSDAY AFTERNOON:
@@ -51,6 +51,8 @@ FRIDAY:
     
 Additional Features: 
     - come back to unfinished photo, search for certain filters
+    - flask wtforms
     - more palettes
     - photo as link to display metadata
+    - keep random result palette consistent when image is published
     

@@ -20,7 +20,18 @@ class UserImage(db.Model):
     
     filter = db.Column(
         db.String,
-        nullable=True,
+        nullable=False,
+        default='none'
+    )
+
+    description = db.Column(
+        db.String,
+        nullable=True
+    )
+    
+    content_type = db.Column(
+        db.String,
+        nullable=False
     )
     
     exifdata = db.Column(

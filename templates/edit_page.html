@@ -40,7 +40,10 @@
 </div>
 
 <div class="publish-photo">
-  <form action="/edit" method="post">
+  <form action="/edit/{{filename}}/{{filter}}" method="post">
+    <p>Current filter: {{filter}}</p>
+    <label for="description">Describe your image so others may find it!</label>
+    <input type="text" name="description" id="description">
     <button>Publish</button>
   </form>
 </div>

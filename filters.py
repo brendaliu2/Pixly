@@ -39,7 +39,7 @@ def random(image):
 # Add Image Border
 def border(image):
     img = Image.open(image)
-    border_img = ImageOps.expand(img, 5)
+    border_img = ImageOps.expand(img, 5, 'red')
     
     in_mem_file = io.BytesIO()
     border_img.save(in_mem_file, format=img.format)

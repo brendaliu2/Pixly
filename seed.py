@@ -8,12 +8,15 @@ db.create_all()
 
 i1 = UserImage(
     filename="test_lighthouse.jpg",
-    published=True
+    published=True,
+    content_type="image/jpeg"
 )
 
 i2 = UserImage(
     filename="Homepage.jpg",
-    published=True
+    published=True,
+    content_type="image/jpeg"
+    
 )
 
 db.session.add_all([i1, i2])
