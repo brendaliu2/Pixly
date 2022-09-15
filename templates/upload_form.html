@@ -8,6 +8,19 @@
   <form action="/upload" method="post" enctype="multipart/form-data">
     <label for="file">Choose Image to Edit:</label>
     <input type="file" id="file" name="file" accept="image/png, image/jpeg">
+    
+    <p>Choose Filter:</p>
+    <label for="gray">Gray</label>
+    <input type='radio' name="filter" id="gray" value="gray">
+    <label for="sepia">Sepia</label>
+    <input type='radio' name="filter" id="sepia" value="sepia">
+    <label for="border">Add Border</label>
+    <input type='radio' name="filter" id="border" value="border">
+    <label for="resize">Downsize</label>
+    <input type='radio' name="filter" id="resize" value="resize">
+    <label for="random">Random</label>
+    <input type='radio' name="filter" id="random" value="random">
+    
     <button>Add</button>
   </form>
 </div>

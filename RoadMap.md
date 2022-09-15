@@ -5,67 +5,52 @@ Frontend: Jinja...then React if time to spare
 
 
 Pages:
-WORKING-HomePage (displays all images with published as t)
-WORKING-Form for adding new photo
+WORKING - HomePage (displays all images with published as t)
+WORKING - Form for adding new photo
+WORKING - Search for photo
 -Edit photo
--Search for photo
 
 
 Thing to Research:
-DONE-upload images
-DONE-retrieve metadata from photo(location, camera, etc) & store in AWS/DB
-DONE-store image file in AWS
--Users can search image data from the EXIF fields (you can learn about PostgreSQL full-text search)
--Edit photos with Pillow library
-- upload photo to AWS - https://soshace.com/uploading-files-to-amazon-s3-with-flask-form-part1-uploading-small-files/
+-DONE-upload images
+-DONE-retrieve metadata from photo(location, camera, etc) & store in AWS/DB
+-DONE-store image file in AWS
+-DONE Edit photos with Pillow library
+-DONE upload photo to AWS 
 
--type of data EXIF files gives back
--diff photos from diff devices have diff EXIF files
+-Users can search image data from the EXIF fields (you can learn about PostgreSQL full-text search)
 
 
 Database:
--columns for metadata
--columns for filters applied
--column for AWS URL
--column for published (boolean)
-    if published f:
-        be able to edit using pillow
-        feature: find image not done editing (image id in url param)
-    when user clicks done:
-        published -> t
-
     columns:
         * filename (req)
         * published (req)
-        * blackandwhite (opt)
-        * sepia (opt)
-        * downsized (opt)
-        * border (opt)
-        * metadata (holds JSON?)
-        * tags 
-
-
+        * filter (opt)
+        * exifdata (holds JSON?)
+        * tags ?
 
 
 User Perspective:
-1. Arrive at homepage with edited photos
+1. Arrive at homepage with photos
 2. Click upload photo
 3. Editing page with buttons that link pillow commands
 4. Click publish
-Feature: come back to unfinished photo, search for certain filters
 
 
-Behind the Scenes:
-1:
-    - SQL call for all photos with published t 
-        - use AWS stored URL as src for img
+THURSDAY MORNING:
+- edit page
+- implement tags?
 
-2:
-    - add photo to AWS -> store AWS URL to DB
-    - add photo to DB
+THURSDAY AFTERNOON:
+- styling
 
-3:
-
-4: 
-
+FRIDAY:
+- file clean up, docstrings
+- styling/features
+    
+    
+Additional Features: 
+    - come back to unfinished photo, search for certain filters
+    - more palettes
+    - photo as link to display metadata
     

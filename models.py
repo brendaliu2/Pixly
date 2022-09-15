@@ -17,29 +17,10 @@ class UserImage(db.Model):
         nullable=False,
         default=False
     )
-
-    blackandwhite = db.Column(
-        db.Boolean,
-        nullable=False,
-        default=False
-    )
     
-    sepia = db.Column(
-        db.Boolean,
-        nullable=False,
-        default=False
-    )
-    
-    downsized = db.Column(
-        db.Boolean,
-        nullable=False,
-        default=False
-    )
-    
-    border = db.Column(
-        db.Boolean,
-        nullable=False,
-        default=False
+    filter = db.Column(
+        db.String,
+        nullable=True,
     )
     
     exifdata = db.Column(

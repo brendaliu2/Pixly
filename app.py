@@ -1,18 +1,17 @@
 # FLASK IMPORTS
 import os
 from dotenv import load_dotenv
-from urllib.parse import urldefrag
-from flask import Flask, render_template, redirect, flash, request
+from flask import Flask, render_template, redirect, request
 from boto_model import  upload_file
 from werkzeug.utils import secure_filename
-from PIL import Image, ExifTags, ImageOps, ImagePalette
+from PIL import Image, ExifTags
 from PIL.ExifTags import TAGS
-import io
 import uuid
-from urllib.request import urlopen
+from filters import *
 
 
 load_dotenv()
+
 # MODEL IMPORTS 
 from models import db, connect_db, UserImage
 
@@ -48,8 +47,10 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def extract_file_extension(filename):          
-    return filename.rsplit('.', 1)[1].lower()
+def generate_unique_filename(filename):
+    file_uuid = str(uuid.uuid4())
+    file_extension = filename.rsplit('.', 1)[1].lower()
+    return f"{file_uuid}.{file_extension}"
 
 # TODO: How to get EXIF data into database?
 def get_exif_data(image):
@@ -66,61 +67,21 @@ def get_exif_data(image):
         
     return
 
-# Make image black/white
-def grey(image):
-    img = Image.open(image)
-    gray_img = ImageOps.grayscale(img)
-    in_mem_file = io.BytesIO()
-    gray_img.save(in_mem_file, format=img.format)
-    in_mem_file.seek(0)
-    return in_mem_file
-    
-
-# Make image sepia
-# FIXME: DOES NOT WORK RIGHT WITH PNGS RIGHT NOW (oh well?)
-def sepia(image):
-    img = Image.open(image)
-    palette = ImagePalette.sepia()
-    sepia_img = img.convert('P')
-    sepia_img.putpalette(palette.palette)
-
-    in_mem_file = io.BytesIO()
-    sepia_img.save(in_mem_file, format='PNG')
-    in_mem_file.seek(0)
-    return in_mem_file
-
-# Make image random color palette
-def random_palette(image):
-    img = Image.open(image)
-    palette = ImagePalette.random()
-    sepia_img = img.convert('P')
-    sepia_img.putpalette(palette.palette)
-
-    in_mem_file = io.BytesIO()
-    sepia_img.save(in_mem_file, format='PNG')
-    in_mem_file.seek(0)
-    return in_mem_file
-
-# Add Image Border
-def border(image):
-    img = Image.open(image)
-    border_img = ImageOps.expand(img, 5)
-    
-    in_mem_file = io.BytesIO()
-    border_img.save(in_mem_file, format=img.format)
-    in_mem_file.seek(0)
-    return in_mem_file
-    
-
-# Change Image Size
-def resize(image):
-    img = Image.open(image)
-    resize_img = img.resize((20,20))
-    
-    in_mem_file = io.BytesIO()
-    resize_img.save(in_mem_file, format=img.format)
-    in_mem_file.seek(0)
-    return in_mem_file
+def set_filter(file, filter):
+    if filter == 'gray':
+            img = gray(file)
+    elif filter == 'sepia':
+            img = sepia(file)
+    elif filter == 'border':
+            img = border(file)
+    elif filter == 'resize':
+            img = resize(file)
+    elif filter == 'random':
+            img = random(file)
+    else: 
+            return file
+            
+    return img
 
 ##################### ROUTES ##################### 
 
@@ -133,7 +94,7 @@ def resize(image):
 
 # SEARCH FORM (redirect to homepage)
 
-
+##################### HOMEPAGE ##################### 
 @app.get('/')
 def show_images():
     """
@@ -141,9 +102,17 @@ def show_images():
     Each image is a link to route for show_image based on the target's primary key.
 
     """
-    all_images = UserImage.query.all()
     
+    hasSearch = request.args
     
+    if hasSearch:
+        searchTerm = request.args['search'].lower()
+        all_images = UserImage.query.filter(
+            UserImage.filter == searchTerm).all()
+        #TODO: add no results message
+    else:
+        all_images = UserImage.query.all()
+
     img_urls = []
     
     for image in all_images:
@@ -152,27 +121,29 @@ def show_images():
     return render_template('image_listing.html', all_images = img_urls)
 
 
-# @app.get('/search')
-# def show_search_form():
-#     """
-#     Show form with one input for image search
+##################### SEARCH ##################### 
 
-#     """
-#     #flask wtf form
-    
-#     return render_template('search.html', search_form = search_form)
-    
-    
+@app.get('/search')
+def show_search_form():
+    """
+    Show form with one input for image search
 
+    """
+    #flask wtf form
+    
+    return render_template('search_form.html')
+    
+    
+##################### UPLOAD ##################### 
 @app.get('/upload')
 def show_upload_form():
     """
     Show upload form
 
     """
-    
     return render_template('upload_form.html')
     
+
 
 @app.post('/upload')
 def process_upload_form():
@@ -180,29 +151,33 @@ def process_upload_form():
     Upload image to DB, upload to AWS, redirect homepage 
     """
     
-    #uploading to AWS
-    file = request.files['file']
+    file = request.files['file'] 
     extra_args = {'ContentType': file.content_type, 'ACL': 'public-read'}
     
+    try:
+        filter = request.form['filter']
+        img = set_filter(file, filter)
+    except:
+        filter = 'none'
+        img = file
+
     #getting exif tag
     #get_exif_data(file)
-    
-    sepia_img = sepia(file)
-    
+
     if file.filename == '':
-        flash('No selected file')
         return redirect('/')
+        
     if file and allowed_file(file.filename):
-        #Generate unique filename (break out into separate function?)
-        file_uuid = str(uuid.uuid4())
-        file_extension = extract_file_extension(file.filename)
-        unique_filename = f"{file_uuid}.{file_extension}"
-        
-        
+
+        unique_filename = generate_unique_filename(file.filename)
         filename = secure_filename(unique_filename)
-        upload_file(sepia_img, BUCKET, filename, extra_args)
+        
+        #add to AWS
+        upload_file(img, BUCKET, filename, extra_args)
         #TODO: manipulate 'published' at later point
-        new_image = UserImage(filename=filename,published=True)
+        
+        #add to DB
+        new_image = UserImage(filename=filename,published=True, filter=filter)
         db.session.add(new_image)
         db.session.commit()
         # TODO: Reintroduce edit form
@@ -211,11 +186,11 @@ def process_upload_form():
     return redirect('/')
     
 
-
+##################### EDIT ##################### 
 # @app.post('/edit')
 # def process_edit():
     '''
-    Change photo to grey, sepia, size, border depending on user selection
+    Change photo to gray, sepia, size, border depending on user selection
     '''
     #accept form selection
     
@@ -236,31 +211,11 @@ def display_edit(filename):
     
     if request.args:
         filter = request.args['filter']
-        new_image = grey(og_image)
-        
-        
-    
+        new_image = gray(og_image)
+
     return render_template(
         'edit_page.html', 
         og_image=og_image, 
         new_image=new_image,
         filename=filename)
     
-    
-# @app.get('/users/new')
-# def add_user():
-#     """Process the add form, adding a new user and going back to /users"""
-
-#     form_data = request.form
-#     first_name = form_data["first_name"]
-#     last_name = form_data["last_name"]
-#     image_url = form_data["image_url"]
-
-#     #instantiate new user
-#     new_user = User(first_name = first_name, last_name = last_name, image_url = image_url)
-
-#     #send user information to database and update
-#     db.session.add(new_user)
-#     db.session.commit()
-
-#     return redirect('/users')
