@@ -6,12 +6,20 @@
 
 <div class="og-image">
   <h2>Original Photo:</h2>
-  <img src='{{og_image}}' width="100px"/>
+  <img src='{{og_image}}' width="100px" />
 </div>
 
 <div class="new-image">
   <h2>Edited Photo:</h2>
-  <img id="picture" src="data:image/jpeg;base64,{{ encoded_image }}" width="100px"/>
+  {% if encoded_image == None %}
+  <img id="picture" src="{{ og_image }}" style='max-width:100px' />
+  {% else %}
+  <img id="picture" 
+  src="data:image/jpeg;base64,{{ encoded_image }}" 
+  style='max-width:100px' />
+  {% endif %}
+
+
 </div>
 
 <div class="edit-photo">
@@ -21,6 +29,12 @@
     <input type='radio' name="filter" id="gray" value="gray">
     <label for="sepia">Sepia</label>
     <input type='radio' name="filter" id="sepia" value="sepia">
+    <label for="border">Add Border</label>
+    <input type='radio' name="filter" id="border" value="border">
+    <label for="resize">Downsize</label>
+    <input type='radio' name="filter" id="resize" value="resize">
+    <label for="random">Random</label>
+    <input type='radio' name="filter" id="random" value="random">
     <button>Edit</button>
   </form>
 </div>

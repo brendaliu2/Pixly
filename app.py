@@ -9,7 +9,8 @@ from PIL.ExifTags import TAGS
 import uuid
 from filters import *
 from PIL import Image, ImageOps, ImagePalette
-import urllib.request
+from urllib.request import urlopen
+
 import io
 import base64
 
@@ -83,7 +84,7 @@ def set_filter(file, filter):
     elif filter == 'random':
             img = random(file)
     else: 
-            return file
+            return random(file)
             
     return img
 
@@ -203,27 +204,61 @@ def process_upload_form():
     #upload to AWS
     
     #redirect ('edit_form')
+ 
+    
+# @app.get('/edit/<filename>')
+# def display_edit(filename):
+#     '''
+#     Diplay original photo, edited photo result(if applicable), and form to edit
+#     '''
+#     og_image = f'{BASE_URL}{filename}'
+    # urllib.request.urlretrieve(f'{BASE_URL}{filename}', "encoded2.png")
+        
+#     # try:
+#     #     filter = request.args['filter']
+#     # except:
+#     #     filter = 'none'
+#     # data = gray('encoded2.png')
+#     # # data = set_filter("encoded.png", filter)
+#     # encoded_img_data = base64.b64encode(data.getvalue())
+
+#     return render_template(
+#         'edit_page.html', 
+#         og_image=og_image, 
+#         # new_image=new_image,
+#         filename=filename,
+#         # encoded_image=encoded_img_data.decode('utf-8')
+#         )
     
 @app.get('/edit/<filename>')
 def display_edit(filename):
     '''
     Diplay original photo, edited photo result(if applicable), and form to edit
     '''
+    
     og_image = f'{BASE_URL}{filename}'
-    urllib.request.urlretrieve(f'{BASE_URL}{filename}', "encoded.png")
-        
+    
+    
     try:
         filter = request.args['filter']
+        data = set_filter(urlopen(og_image), filter)
+        encoded_img_data = base64.b64encode(data.getvalue())
+        new_image = encoded_img_data.decode('utf-8')
     except:
         filter = 'none'
+        new_image = None
     
-    data = set_filter("encoded.png", filter)
-    encoded_img_data = base64.b64encode(data.getvalue())
 
+    # img = Image.open(urlopen(og_image))
+    # gray_img = ImageOps.grayscale(img)
+    # in_mem_file = io.BytesIO()
+    # gray_img.save(in_mem_file, format=img.format)
+    # encoded_img_data = base64.b64encode(in_mem_file.getvalue())
+    # breakpoint()
     return render_template(
         'edit_page.html', 
         og_image=og_image, 
-        # new_image=new_image,
         filename=filename,
-        encoded_image=encoded_img_data.decode('utf-8'))
-    
+        # encoded_image=encoded_img_data.decode('utf-8')
+        encoded_image=new_image
+        )

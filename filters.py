@@ -7,7 +7,7 @@ def gray(image):
     gray_img = ImageOps.grayscale(img)
     in_mem_file = io.BytesIO()
     gray_img.save(in_mem_file, format=img.format)
-    in_mem_file.seek(0)
+    # in_mem_file.seek(0)
     return in_mem_file
     
 
