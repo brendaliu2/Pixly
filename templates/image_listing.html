@@ -2,17 +2,53 @@
 
 {% block content %}
 
-<h1 class="display-1 text-center">PIX.LY</h1>
 
 <div class="container">
     <div class="row">
         <div class="col text-end mb-3">
-            <a href="/search" class="btn btn-primary">Search</a>
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseOne"
+                aria-expanded="true" aria-controls="collapseOne">Search</button>
         </div>
         <div class="col text-start mb-3">
-            <a href="/upload" class="btn btn-primary">Upload</a>
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseTwo"
+                aria-expanded="false" aria-controls="collapseTwo">Upload</button>
         </div>
     </div>
+</div>
+
+<div class="accordion" id="accordionExample">
+    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+        <div class="card-body">
+            <div class="card card-body text-center">
+                <div>
+                    <form action="/" method="get">
+
+                        <label for="search">Search by image description:</label>
+                        <input type='text' name="search" id="search">
+
+                        <button class="btn btn-primary">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+        <div class="card-body">
+            <div class="card card-body text-center">
+                <div class="container">
+                    <form action="/upload" method="post" enctype="multipart/form-data">
+                        <label for="file">Choose Image to Edit:</label>
+                        <input type="file" id="file" name="file" accept="image/png, image/jpeg">
+
+
+                        <button class="btn btn-primary">Add</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <div class="container px-4">

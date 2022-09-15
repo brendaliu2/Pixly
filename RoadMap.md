@@ -55,4 +55,5 @@ Additional Features:
     - more palettes
     - photo as link to display metadata
     - keep random result palette consistent when image is published
+    - make buttons swap filters when selected instead of form submit
     
