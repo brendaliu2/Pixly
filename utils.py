@@ -1,7 +1,8 @@
 import uuid
+import json
 
 # PILLOW IMPORTS
-from PIL import Image, ExifTags
+from PIL import Image, ExifTags, TiffImagePlugin
 from PIL.ExifTags import TAGS
 from PIL import Image, ImageOps, ImagePalette
 
@@ -28,25 +29,50 @@ def generate_unique_filename(filename):
     file_uuid = str(uuid.uuid4())
     file_extension = filename.rsplit('.', 1)[1].lower()
     return f"{file_uuid}.{file_extension}"
-
+    
+def cast(v):
+    if isinstance(v, TiffImagePlugin.IFDRational):
+        return float(v)
+    elif isinstance(v, tuple):
+        return tuple(cast(t) for t in v)
+    elif isinstance(v, bytes):
+        return v.decode(errors="replace")
+    elif isinstance(v, dict):
+        for kk, vv in v.items():
+            v[kk] = cast(vv)
+        return v
+    else: return v
+    
 def get_exif_data(image):
     '''
     Access EXIF data from image and return dictionary of key/value pairs.
     '''
     img = Image.open(image)
-    img.load()
+#     img.load()
     img_exif = img.getexif()
     
+    file_exif_dict = {}
     exif_dict = {}
-    
+       
     if img_exif is None:
         return None
     else:
         for key, val in img_exif.items():
             if key in ExifTags.TAGS:
+                val = cast(val)
                 exif_dict[ExifTags.TAGS[key]]=val
-        
-    return exif_dict
+    
+    exif_str = json.dumps(exif_dict)
+    
+    in_mem_file = io.BytesIO()
+    img.save(in_mem_file, format='PNG')
+    in_mem_file.seek(0)
+    
+    file_exif_dict['file'] = in_mem_file
+    file_exif_dict['exif'] = exif_str
+    return file_exif_dict
+    # return exif_dict
+
 
 def set_filter(file, filter):
     '''

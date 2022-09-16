@@ -9,6 +9,7 @@ from urllib.request import urlopen
 from werkzeug.utils import secure_filename
 from sqlalchemy import update
 
+
 # MODEL IMPORTS 
 from models import db, connect_db, UserImage
 
@@ -82,11 +83,17 @@ def process_upload_form():
     Redirects to edit page or, if invalid filename is provided, redirect to home. 
     """
     
-    file = request.files['file'] 
+    file = request.files['file']
+
     extra_args = {'ContentType': file.content_type, 'ACL': 'public-read'}
 
     #TODO: getting exif tag
-    #get_exif_data(file)
+    file_with_exif_dict = get_exif_data(file)
+    file2 = file_with_exif_dict['file']
+    exif_str = file_with_exif_dict['exif']
+    
+
+
 
     if file.filename == '':
         return redirect('/')
@@ -95,8 +102,18 @@ def process_upload_form():
 
         unique_filename = generate_unique_filename(file.filename)
         filename = secure_filename(unique_filename)
-        upload_file(file, BUCKET, filename, extra_args)
-        new_image = UserImage(filename=filename,published=False,content_type=file.content_type)
+        
+        #upload to AWS
+        upload_file(file2, BUCKET, filename, extra_args)
+        
+        #add to DB
+        new_image = UserImage(
+            filename=filename,
+            published=False,
+            content_type=file.content_type, 
+            exifdata=exif_str
+        )
+        
         db.session.add(new_image)
         db.session.commit()
         return redirect(f'edit/{filename}')
