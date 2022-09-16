@@ -7,7 +7,7 @@ from flask import Flask, render_template, redirect, request
 import base64
 from urllib.request import urlopen
 from werkzeug.utils import secure_filename
-from sqlalchemy import update
+from sqlalchemy import update, or_
 
 
 # MODEL IMPORTS 
@@ -56,10 +56,11 @@ def show_images():
     hasSearch = request.args
     
     if hasSearch:
-        searchTerm = request.args['search'].lower()
-        #TODO: how to filter by multiple different values?
-        all_images = UserImage.query.filter(
+        searchTerm = request.args['search']
+
+        all_images = UserImage.query.filter(or_(
             UserImage.description.like(f"%{searchTerm}%"),
+            UserImage.exifdata.like(f"%{searchTerm}%")),
             UserImage.published == True).all()
 
     else:
@@ -179,7 +180,8 @@ def publish_edit(filename, filter):
                              published=True, 
                              content_type=og_file.content_type, 
                              filter=filter,
-                             description=description)
+                             description=description,
+                             exifdata=og_file.exifdata)
     db.session.add(edited_image)
     db.session.commit()
 

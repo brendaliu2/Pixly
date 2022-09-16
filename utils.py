@@ -3,8 +3,7 @@ import json
 
 # PILLOW IMPORTS
 from PIL import Image, ExifTags, TiffImagePlugin
-from PIL.ExifTags import TAGS
-from PIL import Image, ImageOps, ImagePalette
+from PIL import Image
 
 # GLOBAL CONSTANTS
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
@@ -31,7 +30,9 @@ def generate_unique_filename(filename):
     return f"{file_uuid}.{file_extension}"
     
 def cast(v):
-    '''Helper function to standarize exif dict entries for JSON compatibility'''
+    '''
+    Helper function to standarize exif dict entries for JSON compatibility
+    '''
     if isinstance(v, TiffImagePlugin.IFDRational):
         return float(v)
     elif isinstance(v, tuple):
@@ -49,7 +50,6 @@ def get_exif_data(image):
     Access EXIF data from image and return dictionary of key/value pairs.
     '''
     img = Image.open(image)
-#     img.load()
     img_exif = img.getexif()
     
     file_exif_dict = {}

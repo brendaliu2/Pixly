@@ -31,12 +31,20 @@
     <form action="/edit/{{filename}}" method="get">
       <input type='radio' class="btn-check" name="filter" id="gray" value="gray">
       <label class="btn btn-outline-primary" for="gray">Gray</label>
+
+    
       <input type='radio' class="btn-check" name="filter" id="sepia" value="sepia">
       <label class="btn btn-outline-primary" for="sepia">Sepia</label>
+      
+      
       <input type='radio' class="btn-check" name="filter" id="border" value="border">
       <label class="btn btn-outline-primary" for="border">Add Border</label>
+      
+      
       <input type='radio' class="btn-check" name="filter" id="downsize" value="downsize">
       <label class="btn btn-outline-primary" for="downsize">Downsize</label>
+      
+      
       <input type='radio' class="btn-check" name="filter" id="random" value="random">
       <label class="btn btn-outline-primary" for="random">Random</label>
       <button class="btn btn-info">Add Filter</button>
@@ -44,11 +52,40 @@
   </div>
 </div>
 
+
+
+<!-- <div class="container text-center p-3">
+  <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+    
+    <form action="/edit/{{filename}}" method="get">
+      <input type='radio' class="btn-check" name="filter" id="gray" value="gray">
+      <a href="/edit/{{filename}}" class="btn btn-outline-primary" for="gray">Gray</label>
+    </form>
+    <form action="/edit/{{filename}}" method="get">
+      <input type='radio' class="btn-check" name="filter" id="sepia" value="sepia">
+      <label class="btn btn-outline-primary" for="sepia">Sepia</label>
+    </form>
+    <form action="/edit/{{filename}}" method="get">
+      <input type='radio' class="btn-check" name="filter" id="border" value="border">
+      <label class="btn btn-outline-primary" for="border">Add Border</label>
+    </form>
+    <form action="/edit/{{filename}}" method="get">
+      <input type='radio' class="btn-check" name="filter" id="downsize" value="downsize">
+      <label class="btn btn-outline-primary" for="downsize">Downsize</label>
+    </form>
+    <form action="/edit/{{filename}}" method="get">
+      <input type='radio' class="btn-check" name="filter" id="random" value="random">
+      <label class="btn btn-outline-primary" for="random">Random</label>
+    </form>
+
+  </div>
+</div> -->
+
 <div class="container text-center">
   <form action="/edit/{{filename}}/{{filter}}" method="post">
     <div class="row">
       <label for="description">Describe your image so others may find it! (max 100 characters)</label>
-      <br/>
+      <br />
       <input type="text" name="description" id="description" maxlength="100">
     </div>
     <div class="row mt-4"><button class="btn btn-primary">Publish</button></div>
