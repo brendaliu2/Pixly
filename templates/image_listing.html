@@ -54,17 +54,17 @@
 <div class="container px-4">
     <div class="row gx-1">
         <div class="col-md-6 col-sm-12">
-            {% for image in all_images %}
+            {% for image in all_images|sort(reverse=true, attribute="timestamp") %}
             {% if loop.index is odd() %}
-            <img class='img-fluid p-3' src='{{image}}' />
+            <img class='img-fluid p-3' src='{{image["url"]}}' />
             {% endif %}
             {% endfor %}
         </div>
 
         <div class="col-md-6 col-sm-12">
-            {% for image in all_images %}
+            {% for image in all_images|sort(reverse=true, attribute="timestamp") %}
             {% if loop.index is even() %}
-            <img class='img-fluid p-3' src='{{image}}' />
+            <img class='img-fluid p-3' src='{{image["url"]}}' />
             {% endif %}
             {% endfor %}
         </div>

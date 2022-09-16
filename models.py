@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -37,6 +38,12 @@ class UserImage(db.Model):
     exifdata = db.Column(
         db.String,
         nullable=True
+    )
+    
+    timestamp = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.utcnow,
     )
 
 

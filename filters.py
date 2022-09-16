@@ -47,7 +47,7 @@ def border(image):
 def downsize(image):
     '''Scales down image for logo use and returns image data for rendering.'''
     img = Image.open(image)
-    downsize_img = img.downsize((100,100))
+    downsize_img = img.resize((100,100))
     
     in_mem_file = io.BytesIO()
     downsize_img.save(in_mem_file, format=img.format)

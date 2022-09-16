@@ -67,12 +67,12 @@ def show_images():
         all_images = UserImage.query.filter(
             UserImage.published == True).all()
 
-    img_urls = []
+    timestamped_images = []
     
     for image in all_images:
-        img_urls.append(f'{BASE_URL}{image.filename}')
+        timestamped_images.append({"url":f'{BASE_URL}{image.filename}',"timestamp":image.timestamp})
         
-    return render_template('image_listing.html', all_images = img_urls)
+    return render_template('image_listing.html', all_images = timestamped_images)
 
 
 ##################### UPLOAD ##################### 

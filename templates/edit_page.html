@@ -14,12 +14,14 @@
       </div>
     </div>
     <div class="col-md-6 col-sm-12">
-      <div class="border ml-1">
-        <h2 class="text-center">Filter: {{filter}}</h2>
+      <div class="border ml-1 text-center">
+        <h2>Filter: {{filter}}</h2>
         {% if encoded_image == None %}
         <img id="picture" src="{{ og_image }}" />
+        {% elif filter == 'downsize' %}
+        <img id="picture" src="data:image/jpeg;base64,{{ encoded_image }}" style="max-width: 25%;">
         {% else %}
-        <img id="picture" src="data:image/jpeg;base64,{{ encoded_image }}" />
+        <img id="picture" src="data:image/jpeg;base64,{{ encoded_image }}"/>
         {% endif %}
       </div>
     </div>
@@ -29,13 +31,15 @@
 <div class="container text-center p-3">
   <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
     <form action="/edit/{{filename}}" method="get">
+
+      <input type='radio' class="btn-check" name="filter" id="none" value="none">
+      <label class="btn btn-outline-primary" for="none">None</label>
+
       <input type='radio' class="btn-check" name="filter" id="gray" value="gray">
       <label class="btn btn-outline-primary" for="gray">Gray</label>
 
-    
       <input type='radio' class="btn-check" name="filter" id="sepia" value="sepia">
       <label class="btn btn-outline-primary" for="sepia">Sepia</label>
-      
       
       <input type='radio' class="btn-check" name="filter" id="border" value="border">
       <label class="btn btn-outline-primary" for="border">Add Border</label>
@@ -51,35 +55,6 @@
     </form>
   </div>
 </div>
-
-
-
-<!-- <div class="container text-center p-3">
-  <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-    
-    <form action="/edit/{{filename}}" method="get">
-      <input type='radio' class="btn-check" name="filter" id="gray" value="gray">
-      <a href="/edit/{{filename}}" class="btn btn-outline-primary" for="gray">Gray</label>
-    </form>
-    <form action="/edit/{{filename}}" method="get">
-      <input type='radio' class="btn-check" name="filter" id="sepia" value="sepia">
-      <label class="btn btn-outline-primary" for="sepia">Sepia</label>
-    </form>
-    <form action="/edit/{{filename}}" method="get">
-      <input type='radio' class="btn-check" name="filter" id="border" value="border">
-      <label class="btn btn-outline-primary" for="border">Add Border</label>
-    </form>
-    <form action="/edit/{{filename}}" method="get">
-      <input type='radio' class="btn-check" name="filter" id="downsize" value="downsize">
-      <label class="btn btn-outline-primary" for="downsize">Downsize</label>
-    </form>
-    <form action="/edit/{{filename}}" method="get">
-      <input type='radio' class="btn-check" name="filter" id="random" value="random">
-      <label class="btn btn-outline-primary" for="random">Random</label>
-    </form>
-
-  </div>
-</div> -->
 
 <div class="container text-center">
   <form action="/edit/{{filename}}/{{filter}}" method="post">

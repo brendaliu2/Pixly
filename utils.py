@@ -78,7 +78,7 @@ def set_filter(file, filter):
     '''
     Filter a provided file based on requested filter.
     Returns filtered image or, if no filter is requested/no matching filter found,
-    returns original file for processing.
+    throws error caught in route function. 
     '''
     if filter == 'gray':
             img = gray(file)
@@ -90,7 +90,5 @@ def set_filter(file, filter):
             img = downsize(file)
     elif filter == 'random':
             img = random(file)
-    else: 
-            return file
         
     return img
