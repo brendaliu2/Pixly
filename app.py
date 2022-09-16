@@ -87,13 +87,9 @@ def process_upload_form():
 
     extra_args = {'ContentType': file.content_type, 'ACL': 'public-read'}
 
-    #TODO: getting exif tag
     file_with_exif_dict = get_exif_data(file)
     file2 = file_with_exif_dict['file']
     exif_str = file_with_exif_dict['exif']
-    
-
-
 
     if file.filename == '':
         return redirect('/')

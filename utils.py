@@ -31,6 +31,7 @@ def generate_unique_filename(filename):
     return f"{file_uuid}.{file_extension}"
     
 def cast(v):
+    '''Helper function to standarize exif dict entries for JSON compatibility'''
     if isinstance(v, TiffImagePlugin.IFDRational):
         return float(v)
     elif isinstance(v, tuple):
@@ -71,7 +72,6 @@ def get_exif_data(image):
     file_exif_dict['file'] = in_mem_file
     file_exif_dict['exif'] = exif_str
     return file_exif_dict
-    # return exif_dict
 
 
 def set_filter(file, filter):
