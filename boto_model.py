@@ -1,17 +1,3 @@
-# import boto3
-# import os
-
-# s3 = boto3.client(
-# "s3",
-# "us-west-1",
-# aws_access_key_id=os.enviorn['ACCESS_KEY'],
-# aws_secret_access_key=os.enviorn['SECRET_ACCESS_KEY'],
-# )
-
-
-# bucket_
-# upload_file(file_name, bucket, object_name)
-
 import logging
 import boto3
 from botocore.exceptions import ClientError

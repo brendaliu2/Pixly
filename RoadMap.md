@@ -8,7 +8,7 @@ Pages:
 WORKING - HomePage (displays all images with published as t)
 WORKING - Form for adding new photo
 WORKING - Search for photo
--Edit photo
+WORKING - Edit photo
 
 
 Thing to Research:
@@ -18,7 +18,6 @@ Thing to Research:
 -DONE Edit photos with Pillow library
 -DONE upload photo to AWS 
 
--Users can search image data from the EXIF fields (you can learn about PostgreSQL full-text search)
 
 
 Database:
@@ -44,11 +43,12 @@ THURSDAY AFTERNOON:
 DONE styling
 
 FRIDAY:
+## - Users can search image data from the EXIF fields (you can learn about PostgreSQL full-text search)
 - file clean up, docstrings
     - clean /upload /search routes
-- lightning talk plan
 - photo/desc as link to display metadata?
 
+- lightning talk plan
     
 - vscode pretty upgrade??
     

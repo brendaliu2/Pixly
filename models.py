@@ -39,13 +39,6 @@ class UserImage(db.Model):
         nullable=True
     )
 
-    # tags = db.Column(
-    #     db.Boolean,
-    #     nullable=False,
-    #     default=False
-    # )
-
-
 
 def connect_db(app):
     """Connect to database."""

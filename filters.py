@@ -1,19 +1,17 @@
 from PIL import Image, ImageOps, ImagePalette
 import io
 
-# Make image black/white
 def gray(image):
+    '''Converts in-memory image to grayscale and returns image data for rendering.'''
     img = Image.open(image)
     gray_img = ImageOps.grayscale(img)
     in_mem_file = io.BytesIO()
     gray_img.save(in_mem_file, format=img.format)
-    # in_mem_file.seek(0)
+    in_mem_file.seek(0)
     return in_mem_file
     
-
-# Make image sepia
-# FIXME: DOES NOT WORK RIGHT WITH PNGS RIGHT NOW (oh well?)
 def sepia(image):
+    '''Converts in-memory image to sepia and returns image data for rendering.'''
     img = Image.open(image)
     palette = ImagePalette.sepia()
     sepia_img = img.convert('P')
@@ -24,8 +22,8 @@ def sepia(image):
     in_mem_file.seek(0)
     return in_mem_file
 
-# Make image random color palette
 def random(image):
+    '''Applies random color palette to in-memory image and returns image data for rendering.'''
     img = Image.open(image)
     palette = ImagePalette.random()
     sepia_img = img.convert('P')
@@ -36,8 +34,8 @@ def random(image):
     in_mem_file.seek(0)
     return in_mem_file
 
-# Add Image Border
 def border(image):
+    '''Adds border to in-memory image and returns image data for rendering.'''
     img = Image.open(image)
     border_img = ImageOps.expand(img, 5, 'red')
     
@@ -46,13 +44,12 @@ def border(image):
     in_mem_file.seek(0)
     return in_mem_file
     
-
-# Change Image Size
-def resize(image):
+def downsize(image):
+    '''Scales down image for logo use and returns image data for rendering.'''
     img = Image.open(image)
-    resize_img = img.resize((20,20))
+    downsize_img = img.downsize((100,100))
     
     in_mem_file = io.BytesIO()
-    resize_img.save(in_mem_file, format=img.format)
+    downsize_img.save(in_mem_file, format=img.format)
     in_mem_file.seek(0)
     return in_mem_file
