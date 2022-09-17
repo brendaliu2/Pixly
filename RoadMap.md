@@ -78,6 +78,6 @@ Lightning:
     B- Make photos on homepage clickable for detail
     E- More filters
     B- Come back to unfinished photo
-    E- Download edited photo to user computer
+    E- Easy download edited photo to user computer at different resolutions
     B- Save palette info of random filter for consistency when published
 
